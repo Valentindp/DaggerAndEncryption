@@ -12,6 +12,7 @@ import dagger.Provides
 import dagger.Subcomponent
 import dagger.multibindings.ClassKey
 import dagger.multibindings.IntoMap
+import io.realm.Realm
 import javax.inject.Singleton
 
 @Module(includes = [RealmBindModule::class])
@@ -22,7 +23,10 @@ object RealmModule {
     fun provideRealm(
         @AppContext context: Context,
         cryptography: Cryptography
-    ): RealmDatabase = RealmDatabaseImpl(context, cryptography).also { it.init() }
+    ): RealmDatabase = RealmDatabaseImpl(
+        context = context,
+        key = cryptography.getExistingKey() ?: cryptography.getNewKey(Realm.ENCRYPTION_KEY_LENGTH)
+    ).also { it.init() }
 
 }
 

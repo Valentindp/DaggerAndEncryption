@@ -9,7 +9,7 @@ import java.io.File
 
 class RealmDatabaseImpl(
     private val context: Context,
-    private val cryptography: Cryptography
+    private val key: ByteArray
 ) : RealmDatabase {
 
     companion object {
@@ -28,7 +28,7 @@ class RealmDatabaseImpl(
     private fun createEncryptedRealm(builder: RealmConfiguration.Builder) {
         val unencryptedConfig = builder.build()
         val encryptedConfig = builder.name(ENCRYPTION_FILE_PREFIX + unencryptedConfig.realmFileName)
-            .encryptionKey(cryptography.getExistingKey() ?: cryptography.getNewKey(Realm.ENCRYPTION_KEY_LENGTH))
+            .encryptionKey(key)
             .build()
         migrationIfNeeded(unencryptedConfig, encryptedConfig)
         Realm.setDefaultConfiguration(encryptedConfig)
